@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.List;
+
 @Controller
 public class MyController {
 
@@ -28,9 +30,17 @@ public class MyController {
         student.setOccupation(occupation);
         studentRepository.save(student);
 
+        Iterable<Student> studentList=studentRepository.findAll();
+        String studentInfo="";
+        for (Student s:studentList) {
 
+            studentInfo+=String.format("<ul>" +
+                    "<li> %d %s %s %d %s </li>" +
+                    "</ul>",s.getId(),s.getName(),s.getLastName(),s.getAge(),s.getOccupation());
 
-        return "Saved! " +
+        }
+
+        return  studentInfo +
                 "<form action=\"/\" method=\"GET\">\n" +
                 "<button>Back</button>\n" +
                 "</form>";
