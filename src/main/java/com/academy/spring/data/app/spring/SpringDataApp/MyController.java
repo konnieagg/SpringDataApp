@@ -28,6 +28,8 @@ public class MyController {
         student.setOccupation(occupation);
         studentRepository.save(student);
 
+
+
         return "Saved! " +
                 "<form action=\"/\" method=\"GET\">\n" +
                 "<button>Back</button>\n" +
@@ -46,6 +48,25 @@ public class MyController {
                 "<button>Go</button>\n" +
                 "</form>");
     }
+
+    @PostMapping("/delete")
+    @ResponseBody
+    public String deleteStudent (@RequestParam Long id) {
+
+        studentRepository.deleteById(id);
+
+        return "Deleted! ";
+    }
+    @GetMapping ("/del")
+
+    public ResponseEntity<String> deleteStudent () {
+        return ResponseEntity.ok("<form action=\"/delete\" method=\"POST\">\n" +
+                "<input name=\"id\" placeholder=\"Id\">\n" +
+                "<button>Go</button>\n" +
+                "</form>");
+    }
+
+
 
 
 }
