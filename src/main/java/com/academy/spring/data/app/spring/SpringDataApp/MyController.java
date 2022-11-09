@@ -36,7 +36,9 @@ public class MyController {
 
             studentInfo+=String.format("<ul>" +
                     "<li> %d %s %s %d %s </li>" +
-                    "</ul>",s.getId(),s.getName(),s.getLastName(),s.getAge(),s.getOccupation());
+                    "</ul>",s.getId(),s.getName(),s.getLastName(),s.getAge(),s.getOccupation()) +
+
+                    "<a href='/delete?id=" + s.getId() + "'>delete student</a>" ;
 
         }
 
@@ -59,20 +61,27 @@ public class MyController {
                 "</form>");
     }
 
-    @PostMapping("/delete")
+    @GetMapping("/delete")
     @ResponseBody
     public String deleteStudent (@RequestParam Long id) {
 
         studentRepository.deleteById(id);
 
-        return "Deleted! ";
+        return "Deleted! " +
+                "<form action=\"/\" method=\"GET\">\n" +
+                "<button>Add</button>\n" +
+                "</form>" +
+                "<form action=\"/del\" method=\"GET\">\n" +
+                "<button>Back</button>\n" +
+                "</form>";
+
     }
     @GetMapping ("/del")
 
     public ResponseEntity<String> deleteStudent () {
         return ResponseEntity.ok("<form action=\"/delete\" method=\"POST\">\n" +
                 "<input name=\"id\" placeholder=\"Id\">\n" +
-                "<button>Go</button>\n" +
+                "<button>Delete</button>\n" +
                 "</form>");
     }
 
