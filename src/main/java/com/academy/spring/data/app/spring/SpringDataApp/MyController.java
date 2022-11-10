@@ -87,27 +87,59 @@ public class MyController {
                 "</form>");
     }
 
+    @PostMapping("/save")
+    @ResponseBody
+    public String saveUpdatedStudent (@RequestParam Long id, String name , String lastName, int age, String occupation) {
+        studentRepository.deleteById(id);
+        Student updateStudent=new Student();
+        updateStudent.setId(id);
+        updateStudent.setName(name);
+        updateStudent.setLastName(lastName);
+        updateStudent.setAge(age);
+        updateStudent.setOccupation(occupation);
+
+        studentRepository.save(updateStudent);
+
+        Iterable<Student> updateStudentList=studentRepository.findAll();
+        String updateStudentInfo="";
+        for (Student s:updateStudentList) {
+
+            updateStudentInfo+=String.format("<ul>" +
+                    "<li> %d %s %s %d %s " ,s.getId(),s.getName(),s.getLastName(),s.getAge(),s.getOccupation()) +
+                    "<a href='/delete?id=" + s.getId() + "'><button>Delete student</button></a>" +
+                    "<a href='/update?id=" + s.getId() + "&name=" + s.getName() +"&lastName=" + s.getLastName() +
+                    "&age=" + s.getAge() + "&occupation=" + s.getOccupation() +"'><button>Update student</button></a>" +
+                    "</li>" +
+                    "</ul>";
+
+        }
+
+
+        return "Updated Student with " + id;
+
+    }
+
 
     @GetMapping ("/update")
     @ResponseBody
     public String updateStudent (@RequestParam Long id, String name , String lastName, int age, String occupation) {
-        Student updateStudent=new Student();
+
         studentRepository.findById(id);
-//        updateStudent.setName(name);
-//        updateStudent.setLastName(lastName);
-//        updateStudent.setAge(age);
-//        updateStudent.setOccupation(occupation);
+
 
         return
-                "<form action=\"/add\" method=\"POST\">\n" +
+                "<form action='/save?id=" + id + "&name=" + name +"&lastName=" + lastName +
+                 "&age=" + age + "&occupation=" + occupation + "' method=\"POST\">\n" +
                 "<input name=\"name\" placeholder=\""+name+"\">\n" +
                 "<input name=\"lastName\" placeholder=\""+lastName+"\">\n" +
                 "<input name=\"age\" placeholder=\""+age+"\">\n" +
-                "<input name=\"occupation\" placeholder=\""+occupation+"n\">\n" +
+                "<input name=\"occupation\" placeholder=\""+occupation+"\">\n" +
                 "<button>Save</button>\n" +
                 "</form>";
 
             }
+//            "<a href='/save?id=" + id + "&name=" + name +"&lastName=" + lastName +
+//            "&age=" + age + "&occupation=" + occupation + "'>
 
 
 
