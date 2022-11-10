@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 public class MyController {
@@ -16,43 +17,44 @@ public class MyController {
     private StudentRepository studentRepository;
 
     @Autowired
-    public MyController (StudentRepository studentRepository) {
-        this.studentRepository=studentRepository;
+    public MyController(StudentRepository studentRepository) {
+        this.studentRepository = studentRepository;
     }
 
     @PostMapping("/add")
     @ResponseBody
-    public String addStudent (@RequestParam String name , String lastName, int age, String occupation) {
+    public String addStudent(@RequestParam String name, String lastName, int age, String occupation) {
+
         Student student = new Student();
         student.setName(name);
         student.setLastName(lastName);
         student.setAge(age);
-        student.setOccupation(occupation);
         studentRepository.save(student);
 
-        Iterable<Student> studentList=studentRepository.findAll();
-        String studentInfo="";
-        for (Student s:studentList) {
 
-            studentInfo+=String.format("<ul>" +
-                    "<li> %d %s %s %d %s " ,s.getId(),s.getName(),s.getLastName(),s.getAge(),s.getOccupation()) +
+        student.setOccupation(occupation);
+        Iterable<Student> studentList = studentRepository.findAll();
+        String studentInfo = "";
+        for (Student s : studentList) {
+
+            studentInfo += String.format("<ul>" +
+                    "<li> %d %s %s %d %s ", s.getId(), s.getName(), s.getLastName(), s.getAge(), s.getOccupation()) +
                     "<a href='/delete?id=" + s.getId() + "'><button>Delete student</button></a>" +
-                    "<a href='/update?id=" + s.getId() + "&name=" + s.getName() +"&lastName=" + s.getLastName() +
-                    "&age=" + s.getAge() + "&occupation=" + s.getOccupation() +"'><button>Update student</button></a>" +
+                    "<a href='/update?id=" + s.getId() + "'><button>Update student</button></a>" +
                     "</li>" +
                     "</ul>";
 
         }
 
-        return  studentInfo +
+        return studentInfo +
                 "<form action=\"/\" method=\"GET\">\n" +
                 "<button>Back</button>\n" +
                 "</form>";
     }
 
-    @GetMapping ("/")
+    @GetMapping("/")
 
-    public ResponseEntity<String> addStudent () {
+    public ResponseEntity<String> addStudent() {
 
         return ResponseEntity.ok("<form action=\"/add\" method=\"POST\">\n" +
                 "<input name=\"name\" placeholder=\"Your name\">\n" +
@@ -65,7 +67,7 @@ public class MyController {
 
     @GetMapping("/delete")
     @ResponseBody
-    public String deleteStudent (@RequestParam Long id) {
+    public String deleteStudent(@RequestParam Long id) {
 
         studentRepository.deleteById(id);
 
@@ -78,70 +80,39 @@ public class MyController {
                 "</form>";
 
     }
-    @GetMapping ("/del")
 
-    public ResponseEntity<String> deleteStudent () {
+    @GetMapping("/del")
+
+    public ResponseEntity<String> deleteStudent() {
         return ResponseEntity.ok("<form action=\"/delete\" method=\"POST\">\n" +
                 "<input name=\"id\" placeholder=\"Id\">\n" +
                 "<button>Delete</button>\n" +
                 "</form>");
     }
 
-    @PostMapping("/save")
+
+    @GetMapping("/update")
     @ResponseBody
-    public String saveUpdatedStudent (@RequestParam Long id, String name , String lastName, int age, String occupation) {
-        studentRepository.deleteById(id);
-        Student updateStudent=new Student();
-        updateStudent.setId(id);
-        updateStudent.setName(name);
-        updateStudent.setLastName(lastName);
-        updateStudent.setAge(age);
-        updateStudent.setOccupation(occupation);
+    public String updateStudent(@RequestParam Long id) {
 
-        studentRepository.save(updateStudent);
+        Student student=new Student();
+        Optional<Student> studentOptional = studentRepository.findById(id);
+        if (studentOptional.isPresent()) {
+            student = studentOptional.get();
 
-        Iterable<Student> updateStudentList=studentRepository.findAll();
-        String updateStudentInfo="";
-        for (Student s:updateStudentList) {
-
-            updateStudentInfo+=String.format("<ul>" +
-                    "<li> %d %s %s %d %s " ,s.getId(),s.getName(),s.getLastName(),s.getAge(),s.getOccupation()) +
-                    "<a href='/delete?id=" + s.getId() + "'><button>Delete student</button></a>" +
-                    "<a href='/update?id=" + s.getId() + "&name=" + s.getName() +"&lastName=" + s.getLastName() +
-                    "&age=" + s.getAge() + "&occupation=" + s.getOccupation() +"'><button>Update student</button></a>" +
-                    "</li>" +
-                    "</ul>";
-
+        }else {
+            return "Id doesn't exist";
         }
-
-
-        return "Updated Student with " + id;
+        return
+                "<form action=\"/add\" method=\"POST\">\n"+
+                        "<input name='name' placeholder=\"" + student.getName() + "\">\n" +
+                        "<input name=\"lastName\" placeholder=\"" + student.getLastName() + "\">\n" +
+                        "<input name=\"age\" placeholder=\"" + student.getAge() + "\">\n" +
+                        "<input name=\"occupation\" placeholder=\"" + student.getOccupation() + "\">\n" +
+                        "<button>Save</button>\n" +
+                        "</form>";
 
     }
-
-
-    @GetMapping ("/update")
-    @ResponseBody
-    public String updateStudent (@RequestParam Long id, String name , String lastName, int age, String occupation) {
-
-        studentRepository.findById(id);
-
-
-        return
-                "<form action='/save?id=" + id + "&name=" + name +"&lastName=" + lastName +
-                 "&age=" + age + "&occupation=" + occupation + "' method=\"POST\">\n" +
-                "<input name=\"name\" placeholder=\""+name+"\">\n" +
-                "<input name=\"lastName\" placeholder=\""+lastName+"\">\n" +
-                "<input name=\"age\" placeholder=\""+age+"\">\n" +
-                "<input name=\"occupation\" placeholder=\""+occupation+"\">\n" +
-                "<button>Save</button>\n" +
-                "</form>";
-
-            }
-//            "<a href='/save?id=" + id + "&name=" + name +"&lastName=" + lastName +
-//            "&age=" + age + "&occupation=" + occupation + "'>
-
-
 
 
 }
