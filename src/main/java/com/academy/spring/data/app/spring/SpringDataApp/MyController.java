@@ -8,17 +8,18 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.List;
 import java.util.Optional;
 
 @Controller
 public class MyController {
 
     private StudentRepository studentRepository;
+    private StudentHtmlServiceImpl studentHtmlServiceImpl;
 
     @Autowired
-    public MyController(StudentRepository studentRepository) {
+    public MyController(StudentRepository studentRepository, StudentHtmlServiceImpl studentHtmlServiceImpl) {
         this.studentRepository = studentRepository;
+        this.studentHtmlServiceImpl = studentHtmlServiceImpl;
     }
 
     @PostMapping("/add")
@@ -30,35 +31,13 @@ public class MyController {
         student.setAge(age);
         studentRepository.save(student);
         student.setOccupation(occupation);
-        Iterable<Student> studentList = studentRepository.findAll();
-        String studentInfo = "";
-        for (Student s : studentList) {
-
-            studentInfo += String.format("<ul>" +
-                    "<li> %d %s %s %d %s ", s.getId(), s.getName(), s.getLastName(), s.getAge(), s.getOccupation()) +
-                    "<a href='/delete?id=" + s.getId() + "'><button>Delete student</button></a>" +
-                    "<a href='/update?id=" + s.getId() + "'><button>Update student</button></a>" +
-                    "</li>" +
-                    "</ul>";
-        }
-
-        return studentInfo +
-                "<form action=\"/\" method=\"GET\">\n" +
-                "<button>Back</button>\n" +
-                "</form>";
+        return studentHtmlServiceImpl.updateStudentList(studentRepository);
     }
 
     @GetMapping("/")
-
     public ResponseEntity<String> addStudent() {
 
-        return ResponseEntity.ok("<form action=\"/add\" method=\"POST\">\n" +
-                "<input name=\"name\" placeholder=\"Your name\">\n" +
-                "<input name=\"lastName\" placeholder=\"Your lastName\">\n" +
-                "<input name=\"age\" placeholder=\"Your age\">\n" +
-                "<input name=\"occupation\" placeholder=\"Your occupation\">\n" +
-                "<button>Go</button>\n" +
-                "</form>");
+        return ResponseEntity.ok(studentHtmlServiceImpl.addNewStudent());
     }
     @GetMapping("/delete")
     @ResponseBody
@@ -66,25 +45,8 @@ public class MyController {
 
         studentRepository.deleteById(id);
 
-        return "Deleted! " +
-                "<form action=\"/\" method=\"GET\">\n" +
-                "<button>Back to add</button>\n" +
-                "</form>" +
-                "<form action=\"/del\" method=\"GET\">\n" +
-                "<button>Back to delete</button>\n" +
-                "</form>" +
-                "<form action=\"/display\" method=\"GET\">\n" +
-                "<button>Back to display</button>\n" +
-                "</form>";
+        return studentHtmlServiceImpl.deleteStudent();
 
-    }
-    @GetMapping("/del")
-
-    public ResponseEntity<String> deleteStudent() {
-        return ResponseEntity.ok("<form action=\"/delete\" method=\"POST\">\n" +
-                "<input name=\"id\" placeholder=\"Id\">\n" +
-                "<button>Delete</button>\n" +
-                "</form>");
     }
     Student student = new Student();
 
@@ -98,15 +60,7 @@ public class MyController {
         }else {
             return "Id doesn't exist";
         }
-        return
-                "<form action=\"/save\" method=\"POST\">\n"+
-                        "<input name='name' value=\"" + student.getName() + "\">\n" +
-                        "<input name=\"lastName\" value=\"" + student.getLastName() + "\">\n" +
-                        "<input name=\"age\" value=\"" + student.getAge() + "\">\n" +
-                        "<input name=\"occupation\" value=\"" + student.getOccupation() + "\">\n" +
-                        "<button>Save</button>\n" +
-                        "</form>";
-
+        return studentHtmlServiceImpl.updateStudent(student);
     }
 
     @PostMapping("/save")
@@ -117,38 +71,12 @@ public class MyController {
         student.setAge(age);
         student.setOccupation(occupation);
         studentRepository.save(student);
-        Iterable<Student> studentList = studentRepository.findAll();
-        String studentInfo = "";
-        for (Student s : studentList) {
-
-            studentInfo += String.format("<ul>" +
-                    "<li> %d %s %s %d %s ", s.getId(), s.getName(), s.getLastName(), s.getAge(), s.getOccupation()) +
-                    "<a href='/delete?id=" + s.getId() + "'><button>Delete student</button></a>" +
-                    "<a href='/update?id=" + s.getId() + "'><button>Update student</button></a>" +
-                    "</li>" +
-                    "</ul>";
-        }
-        return studentInfo +
-                "<form action=\"/\" method=\"GET\">\n" +
-                "<button>Back</button>\n" +
-                "</form>";
+        return studentHtmlServiceImpl.updateStudentList(studentRepository);
     }
     @GetMapping("/display")
     @ResponseBody
     public String displayListStudent() {
-        Iterable<Student> studentList = studentRepository.findAll();
-        String studentInfo = "";
-        for (Student s : studentList) {
-
-            studentInfo += String.format("<ul>" +
-                    "<li> %d %s %s %d %s ", s.getId(), s.getName(), s.getLastName(), s.getAge(), s.getOccupation()) +
-                    "<a href='/delete?id=" + s.getId() + "'><button>Delete student</button></a>" +
-                    "<a href='/update?id=" + s.getId() + "'><button>Update student</button></a>" +
-                    "</li>" +
-                    "</ul>";
-        }
-        return studentInfo;
+        return studentHtmlServiceImpl.displayStudent(studentRepository);
     }
-
 
 }
