@@ -24,14 +24,11 @@ public class MyController {
     @PostMapping("/add")
     @ResponseBody
     public String addStudent(@RequestParam String name, String lastName, int age, String occupation) {
-
         Student student = new Student();
         student.setName(name);
         student.setLastName(lastName);
         student.setAge(age);
         studentRepository.save(student);
-
-
         student.setOccupation(occupation);
         Iterable<Student> studentList = studentRepository.findAll();
         String studentInfo = "";
@@ -43,7 +40,6 @@ public class MyController {
                     "<a href='/update?id=" + s.getId() + "'><button>Update student</button></a>" +
                     "</li>" +
                     "</ul>";
-
         }
 
         return studentInfo +
@@ -64,7 +60,6 @@ public class MyController {
                 "<button>Go</button>\n" +
                 "</form>");
     }
-
     @GetMapping("/delete")
     @ResponseBody
     public String deleteStudent(@RequestParam Long id) {
@@ -77,10 +72,12 @@ public class MyController {
                 "</form>" +
                 "<form action=\"/del\" method=\"GET\">\n" +
                 "<button>Back to delete</button>\n" +
+                "</form>" +
+                "<form action=\"/display\" method=\"GET\">\n" +
+                "<button>Back to display</button>\n" +
                 "</form>";
 
     }
-
     @GetMapping("/del")
 
     public ResponseEntity<String> deleteStudent() {
@@ -89,13 +86,11 @@ public class MyController {
                 "<button>Delete</button>\n" +
                 "</form>");
     }
-
+    Student student = new Student();
 
     @GetMapping("/update")
     @ResponseBody
     public String updateStudent(@RequestParam Long id) {
-
-        Student student=new Student();
         Optional<Student> studentOptional = studentRepository.findById(id);
         if (studentOptional.isPresent()) {
             student = studentOptional.get();
@@ -104,14 +99,55 @@ public class MyController {
             return "Id doesn't exist";
         }
         return
-                "<form action=\"/add\" method=\"POST\">\n"+
-                        "<input name='name' placeholder=\"" + student.getName() + "\">\n" +
-                        "<input name=\"lastName\" placeholder=\"" + student.getLastName() + "\">\n" +
-                        "<input name=\"age\" placeholder=\"" + student.getAge() + "\">\n" +
-                        "<input name=\"occupation\" placeholder=\"" + student.getOccupation() + "\">\n" +
+                "<form action=\"/save\" method=\"POST\">\n"+
+                        "<input name='name' value=\"" + student.getName() + "\">\n" +
+                        "<input name=\"lastName\" value=\"" + student.getLastName() + "\">\n" +
+                        "<input name=\"age\" value=\"" + student.getAge() + "\">\n" +
+                        "<input name=\"occupation\" value=\"" + student.getOccupation() + "\">\n" +
                         "<button>Save</button>\n" +
                         "</form>";
 
+    }
+
+    @PostMapping("/save")
+    @ResponseBody
+    public String addStudent2(@RequestParam String name, String lastName, int age, String occupation) {
+        student.setName(name);
+        student.setLastName(lastName);
+        student.setAge(age);
+        student.setOccupation(occupation);
+        studentRepository.save(student);
+        Iterable<Student> studentList = studentRepository.findAll();
+        String studentInfo = "";
+        for (Student s : studentList) {
+
+            studentInfo += String.format("<ul>" +
+                    "<li> %d %s %s %d %s ", s.getId(), s.getName(), s.getLastName(), s.getAge(), s.getOccupation()) +
+                    "<a href='/delete?id=" + s.getId() + "'><button>Delete student</button></a>" +
+                    "<a href='/update?id=" + s.getId() + "'><button>Update student</button></a>" +
+                    "</li>" +
+                    "</ul>";
+        }
+        return studentInfo +
+                "<form action=\"/\" method=\"GET\">\n" +
+                "<button>Back</button>\n" +
+                "</form>";
+    }
+    @GetMapping("/display")
+    @ResponseBody
+    public String displayListStudent() {
+        Iterable<Student> studentList = studentRepository.findAll();
+        String studentInfo = "";
+        for (Student s : studentList) {
+
+            studentInfo += String.format("<ul>" +
+                    "<li> %d %s %s %d %s ", s.getId(), s.getName(), s.getLastName(), s.getAge(), s.getOccupation()) +
+                    "<a href='/delete?id=" + s.getId() + "'><button>Delete student</button></a>" +
+                    "<a href='/update?id=" + s.getId() + "'><button>Update student</button></a>" +
+                    "</li>" +
+                    "</ul>";
+        }
+        return studentInfo;
     }
 
 
