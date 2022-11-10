@@ -37,7 +37,9 @@ public class MyController {
             studentInfo+=String.format("<ul>" +
                     "<li> %d %s %s %d %s " ,s.getId(),s.getName(),s.getLastName(),s.getAge(),s.getOccupation()) +
                     "<a href='/delete?id=" + s.getId() + "'><button>Delete student</button></a>" +
-                    "<a href='/update?id=" + s.getId() + "'><button>Update student</button></a>" + "</li>" +
+                    "<a href='/update?id=" + s.getId() + "&name=" + s.getName() +"&lastName=" + s.getLastName() +
+                    "&age=" + s.getAge() + "&occupation=" + s.getOccupation() +"'><button>Update student</button></a>" +
+                    "</li>" +
                     "</ul>";
 
         }
@@ -84,17 +86,26 @@ public class MyController {
                 "<button>Delete</button>\n" +
                 "</form>");
     }
-    @GetMapping ("/update")
 
-    public ResponseEntity<String> updateStudent (@RequestParam Long id) {
+
+    @GetMapping ("/update")
+    @ResponseBody
+    public String updateStudent (@RequestParam Long id, String name , String lastName, int age, String occupation) {
+        Student updateStudent=new Student();
         studentRepository.findById(id);
-        return ResponseEntity.ok("<form action=\"/add\" method=\"POST\">\n" +
-                "<input name=\"name\" placeholder=\"Your name\">\n" +
-                "<input name=\"lastName\" placeholder=\"Your lastName\">\n" +
-                "<input name=\"age\" placeholder=\"Your age\">\n" +
-                "<input name=\"occupation\" placeholder=\"Your occupation\">\n" +
+//        updateStudent.setName(name);
+//        updateStudent.setLastName(lastName);
+//        updateStudent.setAge(age);
+//        updateStudent.setOccupation(occupation);
+
+        return
+                "<form action=\"/add\" method=\"POST\">\n" +
+                "<input name=\"name\" placeholder=\""+name+"\">\n" +
+                "<input name=\"lastName\" placeholder=\""+lastName+"\">\n" +
+                "<input name=\"age\" placeholder=\""+age+"\">\n" +
+                "<input name=\"occupation\" placeholder=\""+occupation+"n\">\n" +
                 "<button>Save</button>\n" +
-                "</form>");
+                "</form>";
 
             }
 
