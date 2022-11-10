@@ -35,10 +35,10 @@ public class MyController {
         for (Student s:studentList) {
 
             studentInfo+=String.format("<ul>" +
-                    "<li> %d %s %s %d %s </li>" +
-                    "</ul>",s.getId(),s.getName(),s.getLastName(),s.getAge(),s.getOccupation()) +
-
-                    "<a href='/delete?id=" + s.getId() + "'>delete student</a>" ;
+                    "<li> %d %s %s %d %s " ,s.getId(),s.getName(),s.getLastName(),s.getAge(),s.getOccupation()) +
+                    "<a href='/delete?id=" + s.getId() + "'><button>Delete student</button></a>" +
+                    "<a href='/update?id=" + s.getId() + "'><button>Update student</button></a>" + "</li>" +
+                    "</ul>";
 
         }
 
@@ -69,10 +69,10 @@ public class MyController {
 
         return "Deleted! " +
                 "<form action=\"/\" method=\"GET\">\n" +
-                "<button>Add</button>\n" +
+                "<button>Back to add</button>\n" +
                 "</form>" +
                 "<form action=\"/del\" method=\"GET\">\n" +
-                "<button>Back</button>\n" +
+                "<button>Back to delete</button>\n" +
                 "</form>";
 
     }
@@ -84,6 +84,19 @@ public class MyController {
                 "<button>Delete</button>\n" +
                 "</form>");
     }
+    @GetMapping ("/update")
+
+    public ResponseEntity<String> updateStudent (@RequestParam Long id) {
+        studentRepository.findById(id);
+        return ResponseEntity.ok("<form action=\"/add\" method=\"POST\">\n" +
+                "<input name=\"name\" placeholder=\"Your name\">\n" +
+                "<input name=\"lastName\" placeholder=\"Your lastName\">\n" +
+                "<input name=\"age\" placeholder=\"Your age\">\n" +
+                "<input name=\"occupation\" placeholder=\"Your occupation\">\n" +
+                "<button>Save</button>\n" +
+                "</form>");
+
+            }
 
 
 
