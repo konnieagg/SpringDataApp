@@ -1,4 +1,7 @@
-package com.academy.spring.data.app.spring.SpringDataApp;
+package com.academy.spring.data.app.spring.SpringDataApp.studentHtmlService;
+
+import com.academy.spring.data.app.spring.SpringDataApp.studentRepository.Student;
+import com.academy.spring.data.app.spring.SpringDataApp.studentRepository.StudentRepository;
 
 public interface StudentHtmlService {
 

@@ -1,4 +1,4 @@
-package com.academy.spring.data.app.spring.SpringDataApp;
+package com.academy.spring.data.app.spring.SpringDataApp.studentRepository;
 
 import org.springframework.data.repository.CrudRepository;
 

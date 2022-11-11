@@ -1,5 +1,8 @@
-package com.academy.spring.data.app.spring.SpringDataApp;
+package com.academy.spring.data.app.spring.SpringDataApp.controller;
 
+import com.academy.spring.data.app.spring.SpringDataApp.studentRepository.Student;
+import com.academy.spring.data.app.spring.SpringDataApp.studentHtmlService.StudentHtmlServiceImpl;
+import com.academy.spring.data.app.spring.SpringDataApp.studentRepository.StudentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
