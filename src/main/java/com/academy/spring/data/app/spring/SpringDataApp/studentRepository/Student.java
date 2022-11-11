@@ -63,4 +63,11 @@ public class Student {
     public void setOccupation(String occupation) {
         this.occupation = occupation;
     }
+
+    @Override
+    public String toString() {
+        return String.format(
+                "%d %s %s %d %s ", id, name, lastName, age, occupation) ;
+
+    }
 }

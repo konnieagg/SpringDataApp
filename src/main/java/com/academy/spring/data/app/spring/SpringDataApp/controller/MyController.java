@@ -1,5 +1,7 @@
 package com.academy.spring.data.app.spring.SpringDataApp.controller;
 
+import com.academy.spring.data.app.spring.SpringDataApp.searchService.SearchService;
+import com.academy.spring.data.app.spring.SpringDataApp.studentHtmlService.StudentHtmlService;
 import com.academy.spring.data.app.spring.SpringDataApp.studentRepository.Student;
 import com.academy.spring.data.app.spring.SpringDataApp.studentHtmlService.StudentHtmlServiceImpl;
 import com.academy.spring.data.app.spring.SpringDataApp.studentRepository.StudentRepository;
@@ -11,18 +13,21 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.List;
 import java.util.Optional;
 
 @Controller
 public class MyController {
 
     private StudentRepository studentRepository;
-    private StudentHtmlServiceImpl studentHtmlServiceImpl;
+    private StudentHtmlService studentHtmlService;
+    private SearchService searchService;
 
     @Autowired
-    public MyController(StudentRepository studentRepository, StudentHtmlServiceImpl studentHtmlServiceImpl) {
+    public MyController(StudentRepository studentRepository, StudentHtmlService studentHtmlService, SearchService searchService) {
         this.studentRepository = studentRepository;
-        this.studentHtmlServiceImpl = studentHtmlServiceImpl;
+        this.studentHtmlService = studentHtmlService;
+        this.searchService = searchService;
     }
 
     @PostMapping("/add")
@@ -34,13 +39,13 @@ public class MyController {
         student.setAge(age);
         studentRepository.save(student);
         student.setOccupation(occupation);
-        return studentHtmlServiceImpl.updateStudentList(studentRepository);
+        return studentHtmlService.updateStudentList(studentRepository);
     }
 
     @GetMapping("/")
     public ResponseEntity<String> addStudent() {
 
-        return ResponseEntity.ok(studentHtmlServiceImpl.addNewStudent());
+        return ResponseEntity.ok(studentHtmlService.addNewStudent());
     }
     @GetMapping("/delete")
     @ResponseBody
@@ -48,7 +53,7 @@ public class MyController {
 
         studentRepository.deleteById(id);
 
-        return studentHtmlServiceImpl.deleteStudent();
+        return studentHtmlService.deleteStudent();
 
     }
     Student student = new Student();
@@ -63,7 +68,7 @@ public class MyController {
         }else {
             return "Id doesn't exist";
         }
-        return studentHtmlServiceImpl.updateStudent(student);
+        return studentHtmlService.updateStudent(student);
     }
 
     @PostMapping("/save")
@@ -74,12 +79,21 @@ public class MyController {
         student.setAge(age);
         student.setOccupation(occupation);
         studentRepository.save(student);
-        return studentHtmlServiceImpl.updateStudentList(studentRepository);
+        return studentHtmlService.updateStudentList(studentRepository);
     }
     @GetMapping("/display")
     @ResponseBody
     public String displayListStudent() {
-        return studentHtmlServiceImpl.displayStudent(studentRepository);
+
+        return studentHtmlService.displayStudent(studentRepository);
     }
+
+    @GetMapping("/search")
+    @ResponseBody
+    public String searchByName(@RequestParam String name) {
+        List<Student> students = searchService.findStudentByName(name);
+        return searchService.findStudentByName(name).toString();
+    }
+
 
 }

@@ -30,8 +30,8 @@ public class StudentHtmlServiceImpl implements StudentHtmlService {
         for (Student s : studentList) {
 
             studentInfo += String.format("<ul>" +
-                    "<li> %d %s %s %d %s ", s.getId(), s.getName(), s.getLastName(), s.getAge(), s.getOccupation()) +
-                    "<a href='/delete?id=" + s.getId() + "'><button>Delete student</button></a>" +
+                    "<li> %d %s %s %d %s ", s.getId(), s.getName(), s.getLastName(), s.getAge(), s.getOccupation()) + " " +
+                    "<a href='/delete?id=" + s.getId() + "'><button>Delete student</button></a>" + " " +
                     "<a href='/update?id=" + s.getId() + "'><button>Update student</button></a>" +
                     "</li>" +
                     "</ul>";
